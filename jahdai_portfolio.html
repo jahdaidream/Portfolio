@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jahdai-Dream Cross — Complex News Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #E8192C;
+    --red-dark: #B5121F;
+    --black: #0A0A0A;
+    --off-black: #141414;
+    --card-bg: #1A1A1A;
+    --border: rgba(255,255,255,0.08);
+    --text: #F0EDE8;
+    --muted: rgba(240,237,232,0.55);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 56px;
+    background: rgba(10,10,10,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 2.5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a0003 0%, #0A0A0A 50%, #0A0A0A 100%);
+    z-index: 0;
+  }
+
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-watermark {
+    position: absolute;
+    right: -40px;
+    bottom: -20px;
+    font-family: var(--font-display);
+    font-size: clamp(120px, 20vw, 280px);
+    color: rgba(232,25,44,0.06);
+    line-height: 1;
+    z-index: 1;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(64px, 11vw, 140px);
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-name em {
+    font-style: normal;
+    color: var(--red);
+  }
+
+  .hero-desc {
+    font-size: clamp(15px, 1.8vw, 18px);
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--red-dark); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    right: 2.5rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 2.5rem; }
+
+  .section-inner { max-width: 960px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── PITCH ── */
+  .pitch-section { background: var(--off-black); }
+
+  .pitch-text {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 700px;
+  }
+
+  .pitch-text strong { color: var(--text); font-weight: 500; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    margin-top: 3.5rem;
+    border: 1px solid var(--border);
+  }
+
+  .stat {
+    background: var(--off-black);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 52px;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── CLIPS ── */
+  .clips-section { background: var(--black); }
+
+  .clips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .clip-card {
+    display: block;
+    background: var(--card-bg);
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .clip-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--red);
+    transition: width 0.3s ease;
+  }
+
+  .clip-card:hover { background: #1f1f1f; }
+  .clip-card:hover::after { width: 100%; }
+
+  .clip-platform {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.75rem;
+  }
+
+  .clip-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .clip-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  .clip-link {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .clip-link svg { transition: transform 0.2s; }
+  .clip-card:hover .clip-link svg { transform: translate(3px, -3px); }
+
+  /* ── WHY ── */
+  .why-section { background: var(--off-black); }
+
+  .why-quote {
+    border-left: 3px solid var(--red);
+    padding: 2rem 2.5rem;
+    background: rgba(232,25,44,0.04);
+    margin-bottom: 2rem;
+  }
+
+  .why-quote p {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .why-quote p strong { color: var(--text); font-weight: 500; }
+
+  /* ── SOCIALS ── */
+  .socials-section { background: var(--black); border-top: 1px solid var(--border); }
+
+  .socials-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .social-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    padding: 14px 22px;
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .social-card:hover {
+    border-color: var(--red);
+    color: var(--text);
+    background: rgba(232,25,44,0.05);
+  }
+
+  .social-card svg { width: 18px; height: 18px; fill: currentColor; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--off-black);
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  .footer-logo span { color: var(--red); }
+
+  .footer-contact {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .footer-contact a { color: var(--red); text-decoration: none; }
+  .footer-contact a:hover { text-decoration: underline; }
+
+  /* ── FADE IN ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.25rem 3rem; }
+    section { padding: 3.5rem 1.25rem; }
+    footer { padding: 1.5rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">JD<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#pitch">About</a></li>
+    <li><a href="#clips">Work</a></li>
+    <li><a href="#why">Why Complex</a></li>
+    <li><a href="#connect">Connect</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-watermark">COMPLEX</div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Freelance Content Creator — Complex News</p>
+    <h1 class="hero-name">JAHDAI<em>-</em><br>DREAM<br>CROSS</h1>
+    <p class="hero-desc">On-camera host. Culture-first storyteller. Delivering fast, informed takes on music, entertainment, and the moments our generation actually cares about.</p>
+    <div class="hero-actions">
+      <a href="#clips" class="btn-primary">
+        Watch My Work
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="mailto:jahdaicross@gmail.com" class="btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">Scroll</div>
+</div>
+
+<!-- PITCH -->
+<section class="pitch-section" id="pitch">
+  <div class="section-inner">
+    <p class="section-label fade-up">The pitch</p>
+    <h2 class="section-title fade-up">Built for this.</h2>
+    <p class="pitch-text fade-up">
+      I'm a <strong>culture-native on-camera host</strong> with a B.S. in Entertainment Management from UCF and 4+ years producing video content across TikTok, Instagram, and YouTube. I live in the worlds Complex covers — music, sneakers, pop culture, internet moments — and I know how to deliver takes with <strong>urgency and authenticity</strong>. I script, shoot, and edit my own content using <strong>CapCut and Adobe Premiere</strong>, I'm comfortable going fully off-script, and I've covered live events like Rolling Loud with the speed and personality the culture demands.
+    </p>
+
+    <div class="stats fade-up">
+      <div class="stat">
+        <div class="stat-num">4+</div>
+        <div class="stat-label">Years on camera</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Platforms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10×</div>
+        <div class="stat-label">Videos per week</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">UCF</div>
+        <div class="stat-label">Entertainment Mgmt</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIPS -->
+<section class="clips-section" id="clips">
+  <div class="section-inner">
+    <p class="section-label fade-up">On-air examples</p>
+    <h2 class="section-title fade-up">The receipts.</h2>
+
+    <div class="clips-grid fade-up">
+
+      <a class="clip-card" href="https://www.instagram.com/reels/CqdlqVNgo3X/" target="_blank" rel="noopener">
+        <p class="clip-platform">Instagram · Brand Work</p>
+        <p class="clip-title">OrlandoJobs.com — Branded Reel</p>
+        <p class="clip-desc">On-camera brand host delivering scripted and natural content for a major regional employer campaign.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+      <a class="clip-card" href="https://www.instagram.com/reels/CpvXLA4AIrS/" target="_blank" rel="noopener">
+        <p class="clip-platform">Instagram · Brand Work</p>
+        <p class="clip-title">OrlandoJobs.com — Reel 2</p>
+        <p class="clip-desc">Second installment of branded on-camera work — demonstrating range and consistency across formats.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+      <a class="clip-card" href="https://www.instagram.com/reels/CplMlWApcxt/" target="_blank" rel="noopener">
+        <p class="clip-platform">Instagram · Interviews</p>
+        <p class="clip-title">Street Interview w/ Podcast</p>
+        <p class="clip-desc">Real-time street interviews capturing authentic cultural voices — unscripted, fast, and compelling.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+      <a class="clip-card" href="https://www.tiktok.com/@jahdai.dream/video/7632739029217332493?_r=1&_t=ZT-96pi2J00G2n" target="_blank" rel="noopener">
+        <p class="clip-platform">TikTok · Live Event Coverage</p>
+        <p class="clip-title">Rolling Loud — Festival Personality</p>
+        <p class="clip-desc">Live festival coverage at one of hip-hop's biggest stages. Fast, energetic, culture-fluent content creation in real time.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+      <a class="clip-card" href="https://www.tiktok.com/@jahdai.dream/video/7501694988284103979?_r=1&_t=ZT-96piBK2evni" target="_blank" rel="noopener">
+        <p class="clip-platform">TikTok · Personality</p>
+        <p class="clip-title">Personality Showcase</p>
+        <p class="clip-desc">Showcasing natural on-camera charisma, comedic timing, and the ability to carry a segment solo with minimal direction.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+      <a class="clip-card" href="https://www.youtube.com/watch?si=cIl4UVPk8DEuYStF&v=-rszyFHbMWM&feature=youtu.be" target="_blank" rel="noopener">
+        <p class="clip-platform">YouTube · Camera Presence</p>
+        <p class="clip-title">Extended Camera Presence Reel</p>
+        <p class="clip-desc">Long-form demonstration of screen presence, delivery, and the ability to command attention across an extended segment.</p>
+        <span class="clip-link">Watch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY COMPLEX -->
+<section class="why-section" id="why">
+  <div class="section-inner">
+    <p class="section-label fade-up">Why Complex</p>
+    <h2 class="section-title fade-up">This is personal.</h2>
+
+    <div class="why-quote fade-up">
+      <p>Complex isn't just a brand I want to work for — it's the <strong>lens I already see culture through</strong>. From Rolling Loud coverage to street interviews to branded content, I've been building the instincts this role demands: <strong>fast turnarounds, real-time trend awareness</strong>, and the ability to carry a segment with energy and authority. I understand the Complex audience because I am the Complex audience — and I'm ready to deliver <strong>10 videos a week</strong> that sound, feel, and perform like home.</p>
+    </div>
+
+    <p class="pitch-text fade-up" style="margin-top: 1.5rem;">
+      My B.S. in Entertainment Management means I understand the business side of content — not just the creative. I know how to <strong>work with brands, coordinate logistics, and hit deadlines</strong> without sacrificing quality. I'm built for the pace. Give me the assignment.
+    </p>
+  </div>
+</section>
+
+<!-- CONNECT -->
+<section class="socials-section" id="connect">
+  <div class="section-inner">
+    <p class="section-label fade-up">Connect</p>
+    <h2 class="section-title fade-up">Find me everywhere.</h2>
+
+    <div class="socials-row fade-up">
+      <a class="social-card" href="https://www.instagram.com/jahdai.dream?igsh=MWc1ZjR6dXIwMGN0eA%3D%3D&utm_source=qr" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        @jahdai.dream
+      </a>
+
+      <a class="social-card" href="https://www.tiktok.com/@jahdai.dream?_r=1&_t=ZT-96piC3vi5D4" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        @jahdai.dream
+      </a>
+
+      <a class="social-card" href="mailto:jahdaicross@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        jahdaicross@gmail.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">JAHDAI<span>-DREAM</span></div>
+  <p class="footer-contact">407.715.9395 &nbsp;·&nbsp; <a href="mailto:jahdaicross@gmail.com">jahdaicross@gmail.com</a></p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
